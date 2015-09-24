@@ -49,9 +49,11 @@
 
 	window._wx_openid_login = function _wx_openid_login(openid) {
 		//自动登录
+		alert(openid);
 		coAjax.get(appConfig.user.loginer, {
 			openid: openid
 		}, function() {
+
 			alert("success", "微信授权账号自动登录成功");
 			_login_sucess.apply(this, arguments);
 		}, function(errorCode, xhr, errorMsg) {
