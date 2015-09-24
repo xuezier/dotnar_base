@@ -3,10 +3,11 @@
 require(["WX"], function(WX) {
 	//微信分享的配置
 	WX(function(wx) {
-		function _config_wx_share(_current_location) {
+		function _config_wx_share() {
 			// wx.error(function(res) {
 			// 	alert('wx.error: ' + JSON.stringify(res));
 			// });
+			var _current_location = Path._current_location;
 			switch (Path._current_page) {
 				case "/goods_details":
 					var share_config = {
