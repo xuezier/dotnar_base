@@ -42,6 +42,7 @@ define("WX", ["wx_core"], function(wx) {
 			'chooseCard',
 			'openCard'
 		];
+		alert("success",result.result);
 		wx.config(config);
 		window.wx_config = config;
 		window.wx = wx;
