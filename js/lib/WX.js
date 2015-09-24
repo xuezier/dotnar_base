@@ -4,8 +4,8 @@ define("WX", ["wx_core"], function(wx) {
 	var ready = false;
 	coAjax.get(appConfig.wx.jsapi_signature, function(result) {
 		var config = result.result;
-		alert("JSON.stringify(config):" + JSON.stringify(config));
-		config.debug = true;
+		// alert("JSON.stringify(config):" + JSON.stringify(config));
+		config.debug = false;
 		// appConfig.wx.jsapi_ticket
 		config.jsApiList = [
 			'checkJsApi',
@@ -43,8 +43,6 @@ define("WX", ["wx_core"], function(wx) {
 			'chooseCard',
 			'openCard'
 		];
-		alert("success", result.result);
-		wx.config(config);
 		window.wx_config = config;
 		window.wx = wx;
 		wx.ready(function() {

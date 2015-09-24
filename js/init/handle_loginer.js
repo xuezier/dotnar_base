@@ -60,13 +60,11 @@
 	if (_isWX) {
 		//微信必须使用OPENID登录，而且不同站点必须独立授权，确保OPENID的独立性
 		globalGet("WEIXIN_OPENID:" + busInfo._id, function(openid) {
-			alert(openid);
 			if (openid) {
 				_wx_openid_login(openid);
 			}
 		});
 	} else {
-		alert("openiderror");
 		_cookie_login();
 	};
 })();
