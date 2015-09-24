@@ -30,7 +30,7 @@ if (guide_id) {
 var wx_openid = Path.getQuery("WEIXIN_OPENID");
 if (wx_openid) {
 	//保存到lib里面，确保跨页面使用
-	globalSet("WEIXIN_OPENID", wx_openid, function() {
+	globalSet("WEIXIN_OPENID:" + busInfo._id, wx_openid, function() {
 		alert("success", "微信用户授权成功");
 		// eventManager.is(App.get("loginer"), "getLoginer", function() {
 		// 	//如果已经绑定微信账号，就不管，要就去个人中心实现“重新绑定”
