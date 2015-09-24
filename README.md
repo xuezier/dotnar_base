@@ -1,5 +1,5 @@
 # 点纳微站开发工具包
-hhhhhhhsdfsdfsdfsdfsfsdf
+hhhhhhhsdfsdfsdfsdfsfsdfdfsdfsdf
 ## 实现介绍
 与旧版的前端开发框架类似，通用库都在[lib.dotnar.com](http://lib.dotnar.com)来加载从而实现共享资源与缓存。
 
