@@ -5,7 +5,8 @@ define("WX", ["wx_core"], function(wx) {
 	coAjax.get(appConfig.wx.jsapi_signature, function(result) {
 		var config = result.result;
 		alert(config);
-		config.debug = false;
+		config.debug = true;
+		// appConfig.wx.jsapi_ticket
 		config.jsApiList = [
 			'checkJsApi',
 			'onMenuShareTimeline',
