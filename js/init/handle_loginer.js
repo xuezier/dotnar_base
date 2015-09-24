@@ -58,9 +58,9 @@
 		}, function(errorCode, xhr, errorMsg) {
 			//使用OPENID登录失败，尝试使用Cookie的登录方式登录
 			if (errorMsg == "refresh_token time out") {
+				alert("hrer")
 				alert("微信授权已经过期，请重新登录");
 			} else {
-				alert("hrer")
 				alert("error", errorMsg);
 				_cookie_login();
 			};
