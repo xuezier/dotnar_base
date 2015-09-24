@@ -7,7 +7,7 @@ require(["WX"], function(WX) {
 			// 	alert('wx.error: ' + JSON.stringify(res));
 			// });
 			switch (Path._current_page) {
-				case "goods_details":
+				case "/goods_details":
 					var share_config = {
 						title: App.get("goods_detail.goods_name") + "【" + App.get("bus_info.info.title") + "】",
 						desc: App.get('goods_detail.intro'),

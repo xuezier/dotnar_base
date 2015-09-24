@@ -49,7 +49,6 @@
 
 	window._wx_openid_login = function _wx_openid_login(openid) {
 		//自动登录
-		alert(openid);
 		coAjax.get(appConfig.user.loginer, {
 			openid: openid
 		}, function() {
