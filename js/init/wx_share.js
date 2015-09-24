@@ -3,7 +3,7 @@
 require(["WX"], function(WX) {
 	//微信分享的配置
 	WX(function(wx) {
-		Path.on("*", function(_current_location) {
+		function _config_wx_share(_current_location) {
 			// wx.error(function(res) {
 			// 	alert('wx.error: ' + JSON.stringify(res));
 			// });
@@ -46,7 +46,9 @@ require(["WX"], function(WX) {
 			wx.onMenuShareTimeline(share_config);
 			// 分享到QQ
 			wx.onMenuShareQQ(share_config);
-		});
+		};
+		Path.on("*", _config_wx_share);
+		eventManager.on("GoodsLoaded", _config_wx_share);
 		// // 按钮隐藏
 		// wx.hideMenuItems({
 		// 	menuList: [
