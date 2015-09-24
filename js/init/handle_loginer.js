@@ -60,6 +60,7 @@
 			if (errorMsg == "refresh_token time out") {
 				alert("微信授权已经过期，请重新登录");
 			} else {
+				alert("hrer")
 				alert("error", errorMsg);
 				_cookie_login();
 			};
