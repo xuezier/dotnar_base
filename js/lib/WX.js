@@ -45,6 +45,8 @@ define("WX", ["wx_core"], function(wx) {
 		];
 		window.wx_config = config;
 		window.wx = wx;
+		wx.config(config);
+
 		wx.ready(function() {
 			/*_isDev && */
 			alert("success", "微信验证通过");
