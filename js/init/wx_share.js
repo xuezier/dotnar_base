@@ -1,4 +1,5 @@
 //
+
 require(["WX"], function(WX) {
 	//微信分享的配置
 	WX(function(wx) {

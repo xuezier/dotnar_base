@@ -4,7 +4,7 @@ define("WX", ["wx_core"], function(wx) {
 	var ready = false;
 	coAjax.get(appConfig.wx.jsapi_signature, function(result) {
 		var config = result.result;
-		alert(JSON.stringify(config));
+		alert("JSON.stringify(config):" + JSON.stringify(config));
 		config.debug = true;
 		// appConfig.wx.jsapi_ticket
 		config.jsApiList = [
@@ -53,8 +53,8 @@ define("WX", ["wx_core"], function(wx) {
 			wx_fun();
 		});
 		wx.error(function(err) {
-			alert("error", "微信验证失败")
-			alert("error", JSON.stringify(err))
+			// alert("error", "微信验证失败")
+			// alert("error", JSON.stringify(err))
 		});
 	}, function error(error) {
 		return;
