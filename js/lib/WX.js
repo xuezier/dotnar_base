@@ -48,11 +48,11 @@ define("WX", ["wx_core"], function(wx) {
 		wx.ready(function() {
 			_isDev && alert("success", "微信验证通过");
 			ready = true;
-			alert("weixin is ok");
+			alert("error", "weixin is ok");
 			wx_fun();
 		});
 		wx.error(function(err) {
-			alert("weixin is error");
+			alert("error", "weixin is error");
 			alert("error", "微信验证失败")
 			alert("error", JSON.stringify(err))
 		});
