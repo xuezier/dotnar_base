@@ -4,7 +4,7 @@ define("WX", ["wx_core"], function(wx) {
 	var ready = false;
 	coAjax.get(appConfig.wx.jsapi_signature, function(result) {
 		var config = result.result;
-		alert(config);
+		alert(JSON.stringify(config));
 		config.debug = true;
 		// appConfig.wx.jsapi_ticket
 		config.jsApiList = [
@@ -43,7 +43,7 @@ define("WX", ["wx_core"], function(wx) {
 			'chooseCard',
 			'openCard'
 		];
-		alert("success",result.result);
+		alert("success", result.result);
 		wx.config(config);
 		window.wx_config = config;
 		window.wx = wx;
