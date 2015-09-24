@@ -4,7 +4,7 @@ define("WX", ["wx_core"], function(wx) {
 	var ready = false;
 	coAjax.get(appConfig.wx.jsapi_signature, function(result) {
 		var config = result.result;
-		console.log(config);
+		alert(config);
 		config.debug = false;
 		config.jsApiList = [
 			'checkJsApi',
