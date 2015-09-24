@@ -56,7 +56,7 @@ define("WX", ["wx_core"], function(wx) {
 			alert("error", "微信验证失败")
 			alert("error", JSON.stringify(err))
 		});
-	}, function(error) {
+	}, function error(error) {
 		return;
 	});
 
