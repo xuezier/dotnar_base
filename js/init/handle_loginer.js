@@ -62,7 +62,7 @@
 		globalGet("WEIXIN_OPENID:" + busInfo._id, function(openid) {
 			if (openid && !App.get("loginer")) {
 				var cb_url = encodeURIComponent(location.href);
-				location.href = "http://jewel.dotnar.com/wwexin_login.html?cb_url=" + cb_url;
+				location.href = "http://jewel.dotnar.com/weixin_login.html?cb_url=" + cb_url;
 				// _wx_openid_login(openid);
 			}
 		});
