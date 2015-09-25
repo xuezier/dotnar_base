@@ -60,6 +60,7 @@
 	if (_isWX) {
 		//微信必须使用OPENID登录，而且不同站点必须独立授权，确保OPENID的独立性
 		globalGet("WEIXIN_OPENID:" + busInfo._id, function(openid) {
+			// if (openid && !App.get("loginer") && (location.host.indexOf("i-zhubao.com") > -1)) {
 			if (openid && !App.get("loginer") && (location.host.indexOf("i-zhubao.com") > -1)) {
 				var cb_url = encodeURIComponent(location.href);
 				location.href = "http://jewel.dotnar.com/weixin_login.html?cb_url=" + cb_url;
