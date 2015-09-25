@@ -8,8 +8,8 @@
 	 * 管理员相关的页面无需登录
 	 */
 	var no_user_login_pages = {
-		"/admin-beta.html": 1,
-		"/admin-login.html": 1
+		"/cart.html": 1,
+		"/pay.html": 1
 	};
 	if (no_user_login_pages[location.pathname]) {
 		return;
@@ -60,8 +60,10 @@
 	if (_isWX) {
 		//微信必须使用OPENID登录，而且不同站点必须独立授权，确保OPENID的独立性
 		globalGet("WEIXIN_OPENID:" + busInfo._id, function(openid) {
-			if (openid) {
-				_wx_openid_login(openid);
+			if (openid && !App.get("loginer")) {
+				var cb_url = encodeURIComponent(location.href);
+				location.href = "http://jewel.dotnar.com/winxin_login.html?cb_url=" + cb_url;
+				// _wx_openid_login(openid);
 			}
 		});
 	} else {
