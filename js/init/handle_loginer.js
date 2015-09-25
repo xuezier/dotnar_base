@@ -52,7 +52,7 @@
 		coAjax.get(appConfig.user.loginer, {
 			openid: openid
 		}, function() {
-			alert("success", "微信授权账号自动登录成功");
+			// alert("success", "微信授权账号自动登录成功");
 			_login_sucess.apply(this, arguments);
 		});
 	};
@@ -60,7 +60,6 @@
 	if (_isWX) {
 		//微信必须使用OPENID登录，而且不同站点必须独立授权，确保OPENID的独立性
 		globalGet("WEIXIN_OPENID:" + busInfo._id, function(openid) {
-			// if (openid && !App.get("loginer") && (location.host.indexOf("i-zhubao.com") > -1)) {
 			if (openid) {
 				_wx_openid_login(openid);
 			};
