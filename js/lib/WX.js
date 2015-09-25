@@ -49,7 +49,7 @@ define("WX", ["wx_core"], function(wx) {
 
 		wx.ready(function() {
 			/*_isDev && */
-			alert("success", "微信验证通过");
+			// alert("success", "微信验证通过");
 			ready = true;
 			wx_fun();
 		});
