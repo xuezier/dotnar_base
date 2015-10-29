@@ -1,7 +1,7 @@
 //
 ;
 (function() {
-	alert("获取登陆者信息……" + location.pathname)
+	// alert("获取登陆者信息……" + location.pathname)
 
 	//获取登陆用户的信息
 	/*
@@ -55,17 +55,20 @@
 	var succ_cb_list = []
 	var err_cb_list = []
 
+	function _wx_login_success() {
+		alert("success", "微信授权登录成功");
+		_login_sucess.apply(this, arguments);
+	}
 	window._wx_openid_login = function _wx_openid_login(openid) {
+
 		if (location.host.indexOf(".dotnar.com") == -1) {
 			//先判断是否是登录状态，如果已经登录说明是二级域名登录过的，否则跳到二级域名那里登录
 			coAjax.get(appConfig.user.loginer, _login_sucess, function() {
-				native_alert("顶级域名跳转");
 				//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
 				var cb_url = encodeURIComponent(location.href);
 				Path.jump("http://" + busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
 			});
 		} else {
-			native_alert("使用OPENID直接登录");
 			//自动登录
 			coAjax.get(appConfig.user.loginer, {
 				openid: openid
@@ -107,7 +110,6 @@
 				};
 			});
 		} else {
-			native_alert("不是微信，直接Cookie登录")
 			_cookie_login();
 		};
 	})();
