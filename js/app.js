@@ -1,21 +1,21 @@
 /*
  * 全局配置变量
  */
-//Nunjucks <% include "js/lib/Cookies.js" %>
-//Nunjucks <% include "js/lib/QueryString.js" %>
-//Nunjucks <% include "js/lib/eventManager.js" %>
-//Nunjucks <% include "js/lib/dataFormat_coAjax_serverNotify.js" %>
-//Nunjucks <% include "js/lib/alert_confirm_loader.js" %>
-
-//Nunjucks <% include "js/lib/jSouperHandle/documentTitle.js" %>
-//Nunjucks <% include "js/lib/jSouperHandle/number.js" %>
-//Nunjucks <% include "js/lib/jSouperHandle/time.js" %>
-//Nunjucks <% include "js/lib/jSouperHandle/useCss.js" %>
-
-//Nunjucks <% include "js/lib/Path.js" %>
-
-//Nunjucks <% include "js/lib/WX.js" %>
-
+//<?js
+var imports = [
+	"js/lib/Cookies.js",
+	"js/lib/QueryString.js",
+	"js/lib/eventManager.js",
+	"js/lib/dataFormat_coAjax_serverNotify.js",
+	"js/lib/alert_confirm_loader.js",
+	"js/lib/jSouperHandle/documentTitle.js",
+	"js/lib/jSouperHandle/number.js",
+	"js/lib/jSouperHandle/time.js",
+	"js/lib/jSouperHandle/useCss.js",
+	"js/lib/Path.js",
+	"js/lib/WX.js"
+];
+return "\r\n" + IMPORT(imports); ?>
 ;
 /*
  * 加载核心依赖
@@ -44,12 +44,15 @@ require(["r_text!/template/xmp.html", "/template/xmp.js"], function(xmp_html) {
 		Path.emitDefaultOnload();
 		eventManager.emit("!AppReady");
 
-		//Nunjucks <% include "js/init/handle_query.js" %>
-		//Nunjucks <% include "js/init/handle_history.js" %>
-		//Nunjucks <% include "js/init/handle_collect.js" %>
-		//Nunjucks <% include "js/init/handle_loginer.js" %>
-		//Nunjucks <% include "js/init/wx_share.js" %>
-		//Nunjucks <% include "js/init/record_visitor.js" %>
-
+		//<?js
+		var imports = [
+			"js/init/handle_query.js",
+			"js/init/handle_history.js",
+			"js/init/handle_collect.js",
+			"js/init/handle_loginer.js",
+			"js/init/wx_share.js",
+			"js/init/record_visitor.js"
+		];
+		return "\r\n" + IMPORT(imports); ?>
 	});
 });

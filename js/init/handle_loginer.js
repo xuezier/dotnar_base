@@ -1,7 +1,6 @@
 //
 ;
 (function() {
-
 	alert("获取登陆者信息……" + location.pathname)
 
 	//获取登陆用户的信息
