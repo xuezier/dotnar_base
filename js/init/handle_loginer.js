@@ -58,10 +58,12 @@
 
 	window._wx_openid_login = function _wx_openid_login(openid) {
 		if (location.host.indexOf(".dotnar.com") == -1) {
+			native_alert("顶级域名跳转")
 			//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
 			var cb_url = encodeURIComponent(location.href);
 			Path.jump(busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
 		} else {
+			native_alert("使用OPENID登录")
 			//自动登录
 			coAjax.get(appConfig.user.loginer, {
 				openid: openid
@@ -105,6 +107,7 @@
 				};
 			});
 		} else {
+			native_alert("不是微信，直接Cookie登录")
 			_cookie_login();
 		};
 	})();
