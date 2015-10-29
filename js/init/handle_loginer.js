@@ -57,13 +57,22 @@
 	var err_cb_list = []
 
 	window._wx_openid_login = function _wx_openid_login(openid) {
-		//自动登录
-		coAjax.get(appConfig.user.loginer, {
-			openid: openid
-		}, function() {
-			// alert("success", "微信授权账号自动登录成功");
-			_login_sucess.apply(this, arguments);
-		});
+		if (location.host.indexOf(".dotnar.com") == -1) {
+			//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
+			var cb_url = encodeURIComponent(location.href);
+			Path.jump(busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
+		} else {
+			//自动登录
+			coAjax.get(appConfig.user.loginer, {
+				openid: openid
+			}, function() {
+				_login_sucess.apply(this, arguments);
+			}, function(errorMsg) {
+				if (errorMsg === "refresh_token time out") {
+					Path.wxJump(location.href)
+				}
+			});
+		}
 	};
 
 	(window.coAjaxLoginUser = function(succ_cb, err_cb, _force_send) {
