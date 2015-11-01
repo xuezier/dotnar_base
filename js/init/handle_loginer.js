@@ -63,7 +63,7 @@
 
 		if (location.host.indexOf(".dotnar.com") == -1) {
 			//先判断是否是登录状态，如果已经登录说明是二级域名登录过的，否则跳到二级域名那里登录
-			coAjax.get(appConfig.user.loginer, _login_sucess, function() {
+			coAjax.get(appConfig.user.loginer, _wx_login_success, function() {
 				//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
 				var cb_url = encodeURIComponent(location.href);
 				Path.jump("http://" + busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
@@ -72,7 +72,7 @@
 			//自动登录
 			coAjax.get(appConfig.user.loginer, {
 				openid: openid
-			}, _login_sucess, function(errorMsg) {
+			}, _wx_login_success, function(errorMsg) {
 				if (errorMsg === "refresh_token time out") {
 					Path.wxJump(location.href)
 				}
