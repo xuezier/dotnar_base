@@ -5,6 +5,14 @@
 (function() {
 	var _eventCache = {};
 	var _eventMap = {};
+	var _afterMap = {};
+
+	function _initAfter(eventName) {
+		return _afterMap[eventName] = {
+			state: false,
+			handles: []
+		}
+	}
 	var eventManager = {
 		is: function(check_obj, eventName, handle, rejectHandle) {
 			if (check_obj) {
@@ -44,6 +52,39 @@
 				handle.apply(this, arguments);
 			}, rejectHandle);
 		},
+		/*
+		 * is_keep 触发后是否保存，不被注销事件，继续触发
+		 */
+		after: function(eventName, handle, is_keep) {
+			if (!_afterMap.hasOwnProperty(eventName)) {
+				_initAfter(eventName)
+			}
+			var _after_info = _afterMap[eventName];
+			handle._event_after_emit_keep_ = !!is_keep;
+			if (_after_info.state) {
+				handle();
+				if (is_keep) {
+					_after_info.handles.push(handle);
+				}
+			} else {
+				_after_info.handles.push(handle);
+			}
+		},
+		emitAfter: function(eventName) {
+			if (!_afterMap.hasOwnProperty(eventName)) {
+				_initAfter(eventName)
+			}
+			var _after_info = _afterMap[eventName];
+			_after_info.state = true;
+			for (var i = 0, handle; handle = _after_info.handles[i];) {
+				handle();
+				if (handle._event_after_emit_keep_) {
+					i += 1
+				} else {
+					_after_info.handles.splice(i, 1);
+				}
+			}
+		},
 		fire: function(eventName) {
 			var args = Array.prototype.slice.call(arguments, 1);
 			if (_eventCache.hasOwnProperty(eventName)) {
@@ -76,6 +117,5 @@
 	eventManager._eventCache = _eventCache;
 	eventManager._eventMap = _eventMap;
 
-	//Nunjucks <% import "js/lib/exports.js" as exports %>
-	//Nunjucks <$ exports.browser("eventManager", "eventManager") $>
+	//<?js return toBrowserExpore("eventManager", "eventManager") ?>
 }());
