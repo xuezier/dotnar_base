@@ -67,10 +67,11 @@
 		// 	});
 		// 	return "";
 		// }
-		console.log("Path._current_location:", Path._current_location)
-		var id = this._id;
 		var use_css_config;
 		css_link = css_link ? Path.getPathname(css_link) : "";
+		var id = this._id + css_link;
+		// debugger
+		// console.log("Path._current_location:", Path._current_location, css_link, match_pagename, id)
 		//初始化
 		if (!(use_css_config = USE_CSS_MAP[id]) && !USE_CSS_MAP.hasOwnProperty(id)) {
 			use_css_config = (USE_CSS_MAP[id] = {
