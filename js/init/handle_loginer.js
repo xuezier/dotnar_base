@@ -66,7 +66,9 @@
 			coAjax.get(appConfig.user.loginer, _wx_login_success, function() {
 				//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
 				var cb_url = encodeURIComponent(location.href);
-				Path.jump("http://" + busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
+				myConfirm("您的微信账户已绑定过本站点，是否自动登陆？", function() {
+					Path.jump("http://" + busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
+				});
 			});
 		} else {
 			//自动登录
