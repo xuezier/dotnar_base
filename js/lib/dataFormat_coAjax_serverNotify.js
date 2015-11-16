@@ -1,5 +1,5 @@
 //
-(function() { 
+(function() {
 	//Nunjucks <% import "js/lib/exports.js" as exports %>
 	/*
 	 * 数据解析工具
@@ -78,90 +78,166 @@
 		};
 	}
 
-	var ajax = {
-		_addCookiesInUrl: function(url) {
-			// if(url.indexOf("?")==-1){
-			// 	url+="?"
-			// }else{
-			// 	url+="&"
-			// }
-			// url += "cors_cookie="+encodeURI(document.cookie);
-			return url;
-		},
-		_ajax: function(url, type, data, success, error, net_error) {
-			var jqxhr = $.ajax({
-				url: url,
-				type: type,
-				data: data,
-				success: dataFormat(success, error),
-				error: net_error,
-				progress: function(event) {
-					jqxhr.emit("progress", event);
-					if (event.loaded == event.total) {
-						//释放内存
-						eventManager.clear("progress" + _event_prefix);
-					}
-				},
-				xhrFields: {
-					withCredentials: true
-				}
-			});
-			var _event_prefix = Math.random();
-			//事件机制，目前支持progress
-			jqxhr.on = function(eventName) {
-				eventName += _event_prefix;
-				arguments[0] = eventName;
-				return eventManager.on.apply(eventManager, arguments);
-			};
-			jqxhr.emit = function(eventName) {
-				eventName += _event_prefix;
-				arguments[0] = eventName;
-				return eventManager.fire.apply(eventManager, arguments);
-			};
-			return jqxhr;
-		},
-		get: function(url, data, success, error, net_error) {
-			url = ajax._addCookiesInUrl(url);
-			if (data instanceof Function) {
-				net_error = error;
-				error = success;
-				success = data;
-				data = {};
-			};
-			return ajax._ajax(url, "get", data, success, error, net_error);
-		},
-		post: function(url, data, success, error, net_error) {
-			url = ajax._addCookiesInUrl(url);
-			if (data instanceof Function) {
-				net_error = error;
-				error = success;
-				success = data;
-				data = {};
-			};
-			return ajax._ajax(url, "post", data, success, error, net_error);
-		},
-		put: function(url, data, success, error, net_error) {
-			if (data instanceof Function) {
-				net_error = error;
-				error = success;
-				success = data;
-				data = {};
-			};
-			url = ajax._addCookiesInUrl(url);
-			return ajax._ajax(url, "put", data, success, error, net_error);
-		},
-		"delete": function(url, data, success, error, net_error) {
-			url = ajax._addCookiesInUrl(url);
-			if (data instanceof Function) {
-				net_error = error;
-				error = success;
-				success = data;
-				data = {};
-			};
-			return ajax._ajax(url, "delete", data, success, error, net_error);
+	//判断是否支持跨域
+	function can_co(method, url) {
+		var result = false;
+		if (window.XMLHttpRequest && "withCredentials" in (new XMLHttpRequest)) {
+			result = true;
 		}
-	};
-	var coAjax = ajax;
+		return result
+	}
+	if (can_co()) {
+
+		var ajax = {
+			_addCookiesInUrl: function(url) {
+				// if(url.indexOf("?")==-1){
+				// 	url+="?"
+				// }else{
+				// 	url+="&"
+				// }
+				// url += "cors_cookie="+encodeURI(document.cookie);
+				return url;
+			},
+			_ajax: function(url, type, data, success, error, net_error) {
+				var jqxhr = $.ajax({
+					url: url,
+					type: type,
+					data: data,
+					success: dataFormat(success, error),
+					error: net_error,
+					progress: function(event) {
+						jqxhr.emit("progress", event);
+						if (event.loaded == event.total) {
+							//释放内存
+							eventManager.clear("progress" + _event_prefix);
+						}
+					},
+					xhrFields: {
+						withCredentials: true
+					}
+				});
+				var _event_prefix = Math.random();
+				//事件机制，目前支持progress
+				jqxhr.on = function(eventName) {
+					eventName += _event_prefix;
+					arguments[0] = eventName;
+					return eventManager.on.apply(eventManager, arguments);
+				};
+				jqxhr.emit = function(eventName) {
+					eventName += _event_prefix;
+					arguments[0] = eventName;
+					return eventManager.fire.apply(eventManager, arguments);
+				};
+				return jqxhr;
+			},
+			get: function(url, data, success, error, net_error) {
+				url = ajax._addCookiesInUrl(url);
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				return ajax._ajax(url, "get", data, success, error, net_error);
+			},
+			post: function(url, data, success, error, net_error) {
+				url = ajax._addCookiesInUrl(url);
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				return ajax._ajax(url, "post", data, success, error, net_error);
+			},
+			put: function(url, data, success, error, net_error) {
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				url = ajax._addCookiesInUrl(url);
+				return ajax._ajax(url, "put", data, success, error, net_error);
+			},
+			"delete": function(url, data, success, error, net_error) {
+				url = ajax._addCookiesInUrl(url);
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				return ajax._ajax(url, "delete", data, success, error, net_error);
+			}
+		};
+		var coAjax = ajax;
+	} else {
+		var jsonp = {
+			_form_data: function(url, method, data) { //method:GET POST PUT DELETE;data:JSON
+				// //更新Cookie解析的缓存
+				// Cookies.get();
+				var json = JSON.stringify({
+					// cookies:Cookies._cache,
+					method: method,
+					query: (new QueryString(url)).queryHash,
+					data: data //
+				});
+				return url.replace(appConfig.server_url, appConfig.server_url + "jsonp/") + "?_=" + (+new Date) + "&co_data=" + encodeURIComponent(json);
+			},
+			_cb_funs: {},
+			_register: function(cb) {
+				var hash = Math.random().toString().substr(2);
+				jsonp._cb_funs[hash] = cb;
+				return hash;
+			},
+			get: function(url, data, success, error, net_error) {
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				var co_url = jsonp._form_data(url, "get", data);
+				require([co_url], dataFormat(success, error), net_error);
+				// console.log(co_url);
+			},
+			post: function(url, data, success, error, net_error) {
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				var co_url = jsonp._form_data(url, "post", data);
+				require([co_url], dataFormat(success, error), net_error);
+				// console.log(co_url);
+			},
+			put: function(url, data, success, error, net_error) {
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				var co_url = jsonp._form_data(url, "put", data);
+				require([co_url], dataFormat(success, error), net_error);
+				// console.log(co_url);
+			},
+			"delete": function(url, data, success, error, net_error) {
+				if (data instanceof Function) {
+					net_error = error;
+					error = success;
+					success = data;
+					data = {};
+				};
+				var co_url = jsonp._form_data(url, "delete", data);
+				require([co_url], dataFormat(success, error), net_error);
+				// console.log(co_url);
+			}
+		};
+		var coAjax = jsonp;
+	}
 
 	//Nunjucks <$ exports.browser("coAjax", "coAjax") $>
 
@@ -263,6 +339,6 @@
 		return (conns[type] = exports);
 	};
 
-	
+
 	//Nunjucks <$ exports.browser("serverNotify", "serverNotify") $>
 }());
