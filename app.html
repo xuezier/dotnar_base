@@ -33,7 +33,9 @@
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
         <script> appConfig = <$ appConfig|tojson $>; </script>
         <script> busInfo = <$ busInfo|tojson $>; </script>
-        <!-- <script src="js/silence.js" ></script> -->
+        <!--[if IE ]>
+        <script src="__dotnar_lib_base_url__/js/lib/es5-shim.min.js" ></script>
+        <![endif]-->
         <script type="text/javascript" src="__dotnar_lib_base_url__/js/lib/require.min.js"></script>
         <script type="text/javascript" src="__dotnar_lib_base_url__/js/require.config.v3.js"></script>
         <script type="text/javascript" src="__dotnar_lib_base_url__/js/require.config.v3.bus.js"></script>
