@@ -197,7 +197,7 @@ window._can_history_pushState = !!history.pushState;
 			pathname = pathname.substr(0, search_index);
 		}
 
-		_current_location.pathname = pathname;
+		_current_location.pathname = Path.getPathname(pathname);
 		_current_location.hash = hash;
 		_current_location.search = search;
 		_current_location.href = href;
@@ -249,7 +249,6 @@ window._can_history_pushState = !!history.pushState;
 		var xmp_url = base_HTML_url + pagename + ".html";
 		var rightVM = _viewModules[xmp_url];
 		if (!rightVM) {
-			debugger
 			require(["r_text!" + xmp_url], function(html) {
 				_viewModules[xmp_url] = rightVM = jSouper.parse(html, xmp_url)(current_vm.getModel(), xmp_url);
 				_teleporter_vm();
