@@ -11,6 +11,8 @@ window._can_history_pushState = !!history.pushState;
 	var _eventsMap = _events.__map__ = {};
 	var _event_prefix = Math.random().toString();
 	var _aNode = document.createElement("a");
+	var _back_urls = Path._back_urls = (history.state && history.state.back_urls) || [];
+	var _forward_urls = Path._forward_urls = [];
 
 	function _canRunEventAble(event_register, pagename) {
 		var match_result = event_register.regex.exec(pagename);
@@ -79,12 +81,10 @@ window._can_history_pushState = !!history.pushState;
 	Path.once = function(pagename, cb) {
 		function one_wrap_cb() {
 			var result = cb(this, arguments);
-			_removeCbFromEvents(event_register, cb);
+			Path.off(pagename, cb);
 			return result;
 		}
-		var event_register = Path.on(pagename, cb);
-
-		return event_register;
+		return Path.on(pagename, one_wrap_cb);
 	};
 	Path.emit = function(pagename) {
 		jSouper.forEach(_events, function(event_register) {
@@ -102,6 +102,14 @@ window._can_history_pushState = !!history.pushState;
 			}
 		});
 	};
+	Path.off = function(pagename, cb) {
+		if (pagename instanceof Array) pagename = '(' + pagename.join('|') + ')';
+
+		var event_register = _eventsMap.hasOwnProperty(pagename) && _eventsMap[pagename];
+		if (event_register) {
+			_removeCbFromEvents(event_register, cb);
+		}
+	};
 	//通用跳转器
 	if (_can_history_pushState) {
 		Path.jump = function(href) {
@@ -110,12 +118,35 @@ window._can_history_pushState = !!history.pushState;
 				if (_aNode.href === location.href) {
 					return;
 				}
-				history.pushState(null, "跳转中……", _aNode.href.replace(_aNode.origin, ""));
+				var _to_href = _aNode.href.replace(_aNode.origin, "");
+
+				_back_urls = Path._back_urls = (history.state && history.state.back_urls) || [];
+				_back_urls.push(_to_href);
+				_forward_urls.length = 0;
+
+				history.pushState({
+					back_urls: _back_urls
+				}, "跳转中……", _to_href);
 				Path.emitDefaultOnload();
+				//新页面就要跳转到起点
+				window.scrollTo(0, 0);
 			} else {
 				location.href = href;
 			}
 		};
+		window.addEventListener("popstate", function(e) {
+			if (e.state && e.state.back_urls) {
+				//后退
+				if (Path._back_urls.length > e.state.back_urls.length) {
+					_forward_urls.unshift.apply(_forward_urls, Path._back_urls.slice(e.state.back_urls.length));
+				} else { //前进
+					_forward_urls = Path._forward_urls = _forward_urls.slice(e.state.back_urls.length - Path._back_urls.length)
+				}
+				_back_urls = Path._back_urls = e.state.back_urls;
+			} else {
+				_back_urls.length = 0;
+			}
+		});
 	} else {
 		Path.jump = function(href) {
 			location.href = href;
@@ -143,6 +174,21 @@ window._can_history_pushState = !!history.pushState;
 			qs.set(key, value)
 		} else {
 			delete qs.queryHash[key];
+		}
+		Path.jump(qs.toString(_current_location.pathname));
+	};
+	Path.setHash = function(hashMap) {
+		var _current_location = Path._current_location;
+		var qs = _current_location.query;
+		for (var key in hashMap) {
+			if (hashMap.hasOwnProperty(key)) {
+				var value = hashMap[key]
+				if (value) {
+					qs.set(key, value)
+				} else {
+					delete qs.queryHash[key];
+				}
+			}
 		}
 		Path.jump(qs.toString(_current_location.pathname));
 	};
@@ -207,12 +253,6 @@ window._can_history_pushState = !!history.pushState;
 	};
 
 	Path.jSouperRoute = function(options) {
-		if (Path._current_location) {
-			if (Path._current_location.href === options.href && options.emit_lock) {
-				return;
-			}
-		}
-
 		var _viewModules = Path.jSouper_VMS; //VM缓存区
 		var base_HTML_url = options.html = options.html || "/app-pages/pages/"; //请求HTML的路径
 		var base_js_url = options.js = options.js || "/app-pages/js"; //请求js文件的路径
@@ -232,7 +272,7 @@ window._can_history_pushState = !!history.pushState;
 		}
 		var pagename_reg = new RegExp("^" + base_prefix_url.substr(0, base_prefix_url.length - 1) + "(/)?");
 
-		var pagename = jSouper.$.stf(pathname.replace(pagename_reg, ""), "/") || options.default || "index"; //二级页面名
+		var pagename = jSouper.$.stf(pathname.replace(pagename_reg, ""), "/") || options["default"] || "index"; //二级页面名
 		if (options.pagename_handler instanceof Function) {
 			pagename = options.pagename_handler(pagename);
 		}
@@ -241,18 +281,33 @@ window._can_history_pushState = !!history.pushState;
 		var _current_page = Path._current_page = base_prefix_url + pagename;
 
 		function _teleporter_vm() {
-			current_vm.teleporter(rightVM, tele_name);
-			App.set("Path.current_location", _current_location);
-			App.set("Path.current_page", _current_page);
+			if (!rightVM.vm) {
+				rightVM.vm = jSouper.parse(rightVM.html, xmp_url)(current_vm.getModel(), xmp_url);
+			}
+			current_vm.teleporter(rightVM.vm, tele_name);
 			options.stop_emit || Path.emit(pathname, Path._current_location);
+			options.success_cb instanceof Function && options.success_cb();
 		};
 		var xmp_url = base_HTML_url + pagename + ".html";
 		var rightVM = _viewModules[xmp_url];
+
+		App.set("$Loc.current_location", _current_location);
+		App.set("$Loc.current_page", _current_page);
+		Path.setTitle(); //更改Doc-Title
+
 		if (!rightVM) {
+			openPageLoading(_current_page);
 			require(["r_text!" + xmp_url], function(html) {
-				_viewModules[xmp_url] = rightVM = jSouper.parse(html, xmp_url)(current_vm.getModel(), xmp_url);
-				_teleporter_vm();
+				_viewModules[xmp_url] = rightVM = {
+					html: html
+				};
+				//如果在加载的期间，页面被更换了，就不执行回调
+				//否则编译环境的current_localtion不正确会导致渲染问题，比如useCss，同时也能避免不必要的性能消耗
+				if (_current_page == Path._current_page) {
+					_teleporter_vm();
+				}
 				require([base_js_url + pagename + ".js"]);
+				closePageLoading(_current_page);
 			});
 		} else {
 			_teleporter_vm();
@@ -268,7 +323,7 @@ window._can_history_pushState = !!history.pushState;
 			css: "/app-pages/css/",
 			prefix: "/", //URL-pathname中无用的前缀部分，用来过滤href得出pagename
 			tel: "main",
-			default: "main",
+			"default": "main",
 			pagename_handler: function(pagename) { //二次处理pagename
 				return jSouper.$.lst(pagename, ".") || pagename;
 			},
@@ -281,8 +336,20 @@ window._can_history_pushState = !!history.pushState;
 		Path.onload({
 			origin: location.origin,
 			pathname: location.pathname,
-			href: location.href.replace(location.origin, ""),
+			href: location.href.replace(location.origin, "")
 		});
+	};
+	Path.initDefaultOnload = function() {
+		App.set("$Loc.back_urls", Path._back_urls);
+		if (_can_history_pushState) {
+			window.addEventListener("popstate", function(e) {
+				App.set("$Loc.back_urls", Path._back_urls);
+				Path.emitDefaultOnload();
+			});
+		}
+
+		//初始化路由
+		Path.emitDefaultOnload();
 	};
 	//注册路由
 	Path.registerjSouperRoute = function(pathname, cb) {
@@ -292,15 +359,59 @@ window._can_history_pushState = !!history.pushState;
 			if (_emit_lock_) {
 				return;
 			}
-			_emit_lock_ = true;
 			var route_options = cb.apply(this, arguments);
-			Path.jSouperRoute(route_options);
-			_emit_lock_ = false;
+			if (route_options) {
+				_emit_lock_ = true;
+				route_options.success_cb = function() {
+					_emit_lock_ = false;
+				}
+				Path.jSouperRoute(route_options);
+			}
 		});
+	};
+	//Document Title
+	var _title_map = Path._title_map = {};
+	Path.document_title = "";
+	Path.setTitleMap = function(mix_title_map) {
+		for (var i in mix_title_map) {
+			if (mix_title_map.hasOwnProperty(i)) {
+				var title_info = mix_title_map[i];
+				if (typeof title_info === "string") {
+					_title_map[i] = title_info;
+				} else if (typeof title_info === "object") {
+					if (typeof _title_map[i] === "object") { //混合模式 
+						var _new_value_map = title_info.value_map;
+						var _old_value_map = _title_map[i].value_map;
+						for (var v in _new_value_map) {
+							if (_new_value_map.hasOwnProperty(v)) {
+								_old_value_map[v] = _new_value_map[v];
+							}
+						}
+					} else if (title_info.key && title_info.value_map) { //替代模式
+						_title_map[i] = {
+							key: title_info.key,
+							value_map: title_info.value_map
+						};
+					}
+				}
+			}
+		}
+		Path.setTitle();
+	};
+	Path.setTitle = function() {
+		var _current_location = Path._current_location;
+
+		var title_info = _title_map[Path._current_page];
+		if (typeof title_info === "string") {
+			Path.document_title = title_info;
+		} else if (typeof title_info === "object") {
+			var _val = Path.getQuery(title_info.key);
+			Path.document_title = title_info.value_map[_val] || title_info.value_map["*"];
+		}
+		return Path.document_title;
 	};
 
 	Path.refreshCurrentLocation(location.href);
 
-	//Nunjucks <% import "js/lib/exports.js" as exports %>
-	//Nunjucks <$ exports.browser("Path", "Path") $>
+	//<?js return toBrowserExpore("Path", "Path") ?>
 }());

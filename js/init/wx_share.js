@@ -14,7 +14,7 @@ require(["WX"], function(WX) {
 						title: App.get("goods_detail.goods_name") + "【" + App.get("bus_info.info.title") + "】",
 						desc: App.get('goods_detail.intro'),
 						link: location.origin + _current_location.pathname + "?id=" + App.get('goods_detail._id') + "&rcid=" + App.get("loginer._id"),
-						imgUrl: App.get("goods_detail.preview_img_url") + "?imageView/1/w/300/h/300",
+						imgUrl: App.get("goods_detail.preview_img_url") + "?imageView/1/w/300/h/300"
 					};
 					break;
 				default:
