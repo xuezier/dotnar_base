@@ -61,16 +61,16 @@
 	}
 	window._wx_openid_login = function _wx_openid_login(openid) {
 
-		if (location.host.indexOf(".dotnar.com") == -1) {
-			//先判断是否是登录状态，如果已经登录说明是二级域名登录过的，否则跳到二级域名那里登录
-			coAjax.get(appConfig.user.loginer, _wx_login_success, function() {
-				//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
-				var cb_url = encodeURIComponent(location.href);
-				myConfirm("您的微信账户已绑定过本站点，是否自动登陆？", function() {
-					Path.jump("http://" + busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
-				});
-			});
-		} else {
+		// if (location.host.indexOf(".dotnar.com") == -1) {
+		// 	//先判断是否是登录状态，如果已经登录说明是二级域名登录过的，否则跳到二级域名那里登录
+		// 	coAjax.get(appConfig.user.loginer, _wx_login_success, function() {
+		// 		//顶级域名，需要跳转到二级域名进行登录确保Cookie的写入
+		// 		var cb_url = encodeURIComponent(location.href);
+		// 		myConfirm("您的微信账户已绑定过本站点，是否自动登陆？", function() {
+		// 			Path.jump("http://" + busInfo._id + ".dotnar.com/weixin_login.html?cb_url=" + cb_url)
+		// 		});
+		// 	});
+		// } else {
 			//自动登录
 			coAjax.get(appConfig.user.loginer, {
 				openid: openid
@@ -79,7 +79,7 @@
 					Path.wxJump(location.href)
 				}
 			});
-		}
+		// }
 	};
 
 	(window.coAjaxLoginUser = function(succ_cb, err_cb, _force_send) {
