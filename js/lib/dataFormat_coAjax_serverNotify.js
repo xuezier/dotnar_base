@@ -10,6 +10,10 @@
 			my_alert("error", errorMsg);
 		});
 		return function(data, textStatus, jqXHR) {
+			if (!(data && data.type)) {
+				return
+			};
+
 			switch (data.type) {
 				case "string":
 					data.result = data.toString;

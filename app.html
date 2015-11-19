@@ -31,8 +31,17 @@
         <title><$ busInfo.info.title $></title>
         <!-- <meta name="description" content="<$ busInfo.info.intro $>"> -->
         <link rel="apple-touch-icon" href="apple-touch-icon.png">
+        <script type="text/javascript">
+        var browser = navigator.appName;
+        var version = navigator.appVersion.split(";");
+        var trim_Version = version[1].replace(/[ ]/g, "");
+        if ((browser == "Microsoft Internet Explorer" && trim_Version == "MSIE6.0") || (browser == "Microsoft Internet Explorer" && trim_Version == "MSIE7.0") || (browser == "Microsoft Internet Explorer" && trim_Version == "MSIE8.0")) {
+            alert("浏览器版本过低！！！,请升级到IE9或更高版本，Chrome42或更高版本");
+        };
+        </script>
         <script> appConfig = <$ appConfig|tojson $>; </script>
         <script> busInfo = <$ busInfo|tojson $>; </script>
+        <!-- // <script type="text/javascript" src="https://getfirebug.com/firebug-lite.js"></script> -->
         <!--[if IE ]>
         <script src="__dotnar_lib_base_url__/js/lib/es5-shim.min.js" ></script>
         <![endif]-->
@@ -46,7 +55,8 @@
             },
             shim: {
                 "app": {
-                    deps: ["jQuery.notify", "SockJS", "moment-locale-zh-cn", "jSouper", "UI.Model"]
+                    // deps: ["jQuery.notify", "SockJS", "moment-locale-zh-cn", "jSouper", "UI.Model"]
+                    deps: ["jQuery.notify", "jSouper"]
                 }
             }
         });
