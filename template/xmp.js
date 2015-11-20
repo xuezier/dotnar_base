@@ -270,12 +270,16 @@ customTagsInit["weibo-share"] = function(vm) {
 };
 
 customTagsInit["href"] = function(vm) {
-	var aNode = vm.getOneElementByTagName("href");
+	// var aNode = vm.getOneElementByTagName("href");
 	if (!!history.pushState) {
 		//使用History Api封装跳转
 		vm.set("$CPrivate.$Event.noreload_jump", function(e) {
-			Path.jump(aNode.getAttribute("to"));
+			Path.jump(this.getAttribute("to"));
 			return false;
+		});
+	} else {
+		vm.set("$CPrivate.$Event.noreload_jump", function(e) {
+			location.href = this.getAttribute("to");
 		});
 	}
 };

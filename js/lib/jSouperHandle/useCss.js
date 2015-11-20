@@ -58,6 +58,7 @@
 		}
 	}
 	jSouper.registerHandle("useCss", function _use_css(css_link, match_pagename) {
+		console.log("USE CSS:", arguments);
 		// debugger
 		// if (!Path._current_location) {
 		// 	//因为缓存问题导致运作流程有误
@@ -80,6 +81,7 @@
 				style_id: this.vmName
 			});
 			Path.on("*", function() {
+				console.log("USE CSS CONFIG:", use_css_config);
 				_load_css_link(use_css_config);
 			});
 		}
