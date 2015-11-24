@@ -61,14 +61,29 @@
             }
         });
         require(["r_css!/css/app.css"]);
-        require(["r_css!/css/fontello.css"]);
-        require(["r_css!/css/fontello-ie7.css"]);
+        // require([_isIE ? "r_css!/css/fontello-ie7.css" : "r_css!/css/fontello.css"]);
+        // alert(_isIE ? "r_css!/css/fontello-ie7.css" : "r_css!/css/fontello.css");
         require(["app"], function() {
             require(["/app-pages/js/top.js"]);
             if (__browser == "Microsoft Internet Explorer" && __trim_Version == "MSIE8.0") {
                 alert("warn", "浏览器版本过低，请尽快升级到IE9或更高版本，Chrome42或更高版本", 10000);
             }
             closePageLoading();
+
+            eventManager.once("jSouper-page-onload", function() {
+                eventManager.once("finish-all-coAjax", function() {
+                  
+                    // require(["r_css!" + lib_url + "css/fontello.css?_="+Math.random()]);
+                    require(["r_css!/css/fontello.css"]);
+                });
+            });
+            // require(["r_css!/css/fontello.css"]);
+            // setTimeout(function() {
+            //     alert("woc")
+            //     require(["r_css!/css/fontello.css"],function (css_text) {
+            //         removeSheet(css_text)
+            //     });
+            // }, 2000);
         });
         </script>
     </head>

@@ -14,7 +14,6 @@
 		}
 		return res;
 	}
-	window.native_alert = window.alert;
 	var notify_color_map = {
 		white: "#ffffff",
 		ashen: "#d9d6c3",
@@ -87,6 +86,7 @@
 		info: "#1ba1e2",
 		lightWhite: "#f6f5ec"
 	};
+	window.native_alert = window.alert;
 	window.alert = window.myAlert = window.my_alert = function(type, alert_str) {
 		var args = arguments;
 		var result;
@@ -121,11 +121,20 @@
 		return result;
 	};
 	var $pageLoader = $("#pageLoader");
-	window.openPageLoading = function() {
+	var _page_load_lock = {};
+	window.openPageLoading = function(key) {
+		if (key) {
+			_page_load_lock[key] = true;
+		}
 		$pageLoader.removeClass("hidden");
 	};
 
-	window.closePageLoading = function() {
-		$pageLoader.addClass("hidden");
+	window.closePageLoading = function(key) {
+		if (key) {
+			delete _page_load_lock[key];
+		}
+		if (Object.keys(_page_load_lock).length == 0) {
+			$pageLoader.addClass("hidden");
+		}
 	};
 }());

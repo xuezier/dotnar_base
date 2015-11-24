@@ -10,6 +10,7 @@
 			my_alert("error", errorMsg);
 		});
 		return function(data, textStatus, jqXHR) {
+			_xhr_list_len -= 1;
 			if (!(data && data.type)) {
 				return
 			};
@@ -51,8 +52,19 @@
 					success.apply(this, arguments);
 					break;
 			}
+			_try_finish_all_coAjax();
 		};
 	};
+
+	function _default_net_error(net_error) {
+		return function() {
+			_xhr_list_len -= 1;
+			if (net_error instanceof Function) {
+				net_error.apply(this, arguments)
+			}
+			_try_finish_all_coAjax();
+		}
+	}
 
 	//Nunjucks <$ exports.browser("dataFormat", "dataFormat") $>
 
@@ -90,6 +102,19 @@
 		}
 		return result
 	}
+	var _xhr_list_len = 0;
+
+	var _ti;
+
+	function _try_finish_all_coAjax() {
+		clearTimeout(_ti);
+		_ti = setTimeout(function() {
+			if (_xhr_list_len == 0) {
+				eventManager.emit("finish-all-coAjax")
+			}
+		}, 200)
+	};
+
 	if (can_co()) {
 
 		var ajax = {
@@ -108,7 +133,7 @@
 					type: type,
 					data: data,
 					success: dataFormat(success, error),
-					error: net_error,
+					error: _default_net_error(net_error),
 					progress: function(event) {
 						jqxhr.emit("progress", event);
 						if (event.loaded == event.total) {
@@ -132,6 +157,7 @@
 					arguments[0] = eventName;
 					return eventManager.fire.apply(eventManager, arguments);
 				};
+				_xhr_list_len += 1;
 				return jqxhr;
 			},
 			get: function(url, data, success, error, net_error) {
@@ -189,6 +215,11 @@
 				});
 				return url.replace(appConfig.server_url, appConfig.server_url + "jsonp/") + "?_=" + (+new Date) + "&co_data=" + encodeURIComponent(json);
 			},
+			_ajax: function(url, type, data, success, error, net_error) {
+				var co_url = jsonp._form_data(url, type, data);
+				require([co_url], dataFormat(success, error), _default_net_error(net_error));
+				_xhr_list_len += 1;
+			},
 			_cb_funs: {},
 			_register: function(cb) {
 				var hash = Math.random().toString().substr(2);
@@ -202,9 +233,7 @@
 					success = data;
 					data = {};
 				};
-				var co_url = jsonp._form_data(url, "get", data);
-				require([co_url], dataFormat(success, error), net_error);
-				// console.log(co_url);
+				return jsonp._ajax(url, "get", data, success, error, net_error);
 			},
 			post: function(url, data, success, error, net_error) {
 				if (data instanceof Function) {
@@ -213,9 +242,7 @@
 					success = data;
 					data = {};
 				};
-				var co_url = jsonp._form_data(url, "post", data);
-				require([co_url], dataFormat(success, error), net_error);
-				// console.log(co_url);
+				return jsonp._ajax(url, "post", data, success, error, net_error);
 			},
 			put: function(url, data, success, error, net_error) {
 				if (data instanceof Function) {
@@ -224,9 +251,7 @@
 					success = data;
 					data = {};
 				};
-				var co_url = jsonp._form_data(url, "put", data);
-				require([co_url], dataFormat(success, error), net_error);
-				// console.log(co_url);
+				return jsonp._ajax(url, "put", data, success, error, net_error);
 			},
 			"delete": function(url, data, success, error, net_error) {
 				if (data instanceof Function) {
@@ -235,13 +260,14 @@
 					success = data;
 					data = {};
 				};
-				var co_url = jsonp._form_data(url, "delete", data);
-				require([co_url], dataFormat(success, error), net_error);
-				// console.log(co_url);
+				return jsonp._ajax(url, "delete", data, success, error, net_error);
 			}
 		};
 		var coAjax = jsonp;
 	}
+	coAjax._get_xhr_list_len = function() {
+		return _xhr_list_len;
+	};
 
 	//Nunjucks <$ exports.browser("coAjax", "coAjax") $>
 

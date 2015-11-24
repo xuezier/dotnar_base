@@ -25,11 +25,11 @@
 	function _load_css_link(use_css_config) {
 		if (use_css_config.pagename.exec(Path._current_location.pathname)) { //匹配成功
 			if (!use_css_config.load) { //未下载，直接下载使用并缓存
-				use_css_config.id = this._id;
+				// use_css_config.id = this._id;
 				use_css_config.load = true; //锁定
 				use_css_config.using = true; //锁定
 				use_css_config.loading = true;
-				openPageLoading();
+				openPageLoading("useCss:" + use_css_config.id);
 
 				(function start_load_css() {
 					var current_css_link = use_css_config.css_link;
@@ -41,7 +41,7 @@
 							start_load_css();
 							return;
 						}
-						closePageLoading();
+						closePageLoading("useCss:" + use_css_config.id);
 						use_css_config.css_text = css_text;
 						use_css_config.loading = false;
 					}, use_css_config.style_id);
@@ -58,8 +58,6 @@
 		}
 	}
 	jSouper.registerHandle("useCss", function _use_css(css_link, match_pagename) {
-		console.log("USE CSS:", arguments);
-		// debugger
 		// if (!Path._current_location) {
 		// 	//因为缓存问题导致运作流程有误
 		// 	var self = this;
@@ -68,20 +66,19 @@
 		// 	});
 		// 	return "";
 		// }
+		console.log("Path._current_location:", Path._current_location)
 		var use_css_config;
 		css_link = css_link ? Path.getPathname(css_link) : "";
 		var id = this._id + css_link;
-		// debugger
-		// console.log("Path._current_location:", Path._current_location, css_link, match_pagename, id)
 		//初始化
 		if (!(use_css_config = USE_CSS_MAP[id]) && !USE_CSS_MAP.hasOwnProperty(id)) {
 			use_css_config = (USE_CSS_MAP[id] = {
+				id: id,
 				pagename: Path.pathToRegexp(match_pagename || Path._current_location.pathname),
 				css_link: css_link,
 				style_id: this.vmName
 			});
 			Path.on("*", function() {
-				console.log("USE CSS CONFIG:", use_css_config);
 				_load_css_link(use_css_config);
 			});
 		}

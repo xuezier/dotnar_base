@@ -289,6 +289,7 @@ window._can_history_pushState = !!history.pushState;
 			current_vm.teleporter(rightVM.vm, tele_name);
 			options.stop_emit || Path.emit(pathname, Path._current_location);
 			options.success_cb instanceof Function && options.success_cb();
+			eventManager.emit("jSouper-page-onload");
 		};
 		var xmp_url = base_HTML_url + pagename + ".html";
 		var rightVM = _viewModules[xmp_url];
@@ -303,13 +304,16 @@ window._can_history_pushState = !!history.pushState;
 				_viewModules[xmp_url] = rightVM = {
 					html: html
 				};
-				//如果在加载的期间，页面被更换了，就不执行回调
-				//否则编译环境的current_localtion不正确会导致渲染问题，比如useCss，同时也能避免不必要的性能消耗
-				if (_current_page == Path._current_page) {
-					_teleporter_vm();
+
+				function _load() {
+					//如果在加载的期间，页面被更换了，就不执行回调
+					//否则编译环境的current_localtion不正确会导致渲染问题，比如useCss，同时也能避免不必要的性能消耗
+					if (_current_page == Path._current_page) {
+						_teleporter_vm();
+					}
+					closePageLoading(_current_page);
 				}
-				require([base_js_url + pagename + ".js"]);
-				closePageLoading(_current_page);
+				require([base_js_url + pagename + ".js"], _load, _load);
 			});
 		} else {
 			_teleporter_vm();
