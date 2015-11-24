@@ -313,4 +313,7 @@ customTagsInit["input"] = function(vm) {
 	jSouper.onElementPropertyChange(inputNode, "value", function(key, value) {
 		vm.set("$CPrivate.$Cache.show_placeholder", !!value)
 	}, true);
+	vm.set("$CPrivate.$Event.focus_input",function(){
+		inputNode.focus()
+	});
 }

@@ -89,6 +89,6 @@
 <xmp type="tag" name="input" if="_isIE&&(!this.getAttribute('type')||this.getAttribute('type')=='text')">
     <IEinputwarp>
         <input ${__all_attrs__} ${--placeholder}>
-        <placeholder class="{{$CPrivate.$Cache.show_placeholder&&'hidden'}}">${placeholder}</placeholder>
+        <placeholder event-click="{{'$CPrivate.$Event.focus_input'}}" class="{{$CPrivate.$Cache.show_placeholder&&'hidden'}}">${placeholder}</placeholder>
     </IEinputwarp>
 </xmp>
