@@ -307,3 +307,10 @@ customTagsInit["pagination2"] = function(vm) {
 		Path.setQuery("page", ~~Path.getQuery("page") + 1)
 	});
 };
+
+customTagsInit["input"] = function(vm) {
+	var inputNode = vm.getOneElementByTagName("input");
+	jSouper.onElementPropertyChange(inputNode, "value", function(key, value) {
+		vm.set("$CPrivate.$Cache.show_placeholder", !!value)
+	}, true);
+}

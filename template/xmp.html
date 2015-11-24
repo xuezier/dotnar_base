@@ -86,3 +86,9 @@
 <xmp type="tag" name="href">
     <href ${__all_attrs__} event-click-noreload-jump="{{'$CPrivate.$Event.noreload_jump'}}">${innerHTML}</href>
 </xmp>
+<xmp type="tag" name="input" if="_isIE&&(!this.getAttribute('type')||this.getAttribute('type')=='text')">
+    <IEinputwarp>
+        <input ${__all_attrs__} ${--placeholder}>
+        <placeholder class="{{$CPrivate.$Cache.show_placeholder&&'hidden'}}">${placeholder}</placeholder>
+    </IEinputwarp>
+</xmp>

@@ -190,3 +190,20 @@ imguploaderwrap .click-to-add .value {
 	text-align: center;
 	display: block
 }
+
+IEinputwarp{
+	position: relative;
+}
+IEinputwarp placeholder{
+	display: block;
+	position: absolute;
+	top: 0;
+	left: 0;
+	line-height: 100%;
+	color: #A9A9A9;
+	z-index: 0;
+	text-indent: 0.5em;
+}
+IEinputwarp placeholder.hidden{
+	display: none;
+}
