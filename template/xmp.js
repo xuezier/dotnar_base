@@ -308,12 +308,15 @@ customTagsInit["pagination2"] = function(vm) {
 	});
 };
 
+jSouper.customTagsInitBefore["input"] = function() {
+	return !this.type || this.type == "text"
+};
 customTagsInit["input"] = function(vm) {
 	var inputNode = vm.getOneElementByTagName("input");
 	jSouper.onElementPropertyChange(inputNode, "value", function(key, value) {
 		vm.set("$CPrivate.$Cache.show_placeholder", !!value)
 	}, true);
-	vm.set("$CPrivate.$Event.focus_input",function(){
+	vm.set("$CPrivate.$Event.focus_input", function() {
 		inputNode.focus()
 	});
 }
