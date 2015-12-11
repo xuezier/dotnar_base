@@ -69,14 +69,15 @@
                 alert("warn", "浏览器版本过低，请尽快升级到IE9或更高版本，Chrome42或更高版本", 10000);
             }
             closePageLoading();
-
-            eventManager.once("jSouper-page-onload", function() {
-                eventManager.once("finish-all-coAjax", function() {
-                  
-                    // require(["r_css!" + lib_url + "css/fontello.css?_="+Math.random()]);
-                    require(["r_css!/css/fontello.css"]);
+            if (_isIE) {
+                eventManager.once("jSouper-page-onload", function() {
+                    eventManager.once("finish-all-coAjax", function() {
+                        require(["r_css!/css/fontello.css"]);
+                    });
                 });
-            });
+            }else{
+                require(["r_css!/css/fontello.css"]);
+            }
             // require(["r_css!/css/fontello.css"]);
             // setTimeout(function() {
             //     alert("woc")
