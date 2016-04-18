@@ -30,6 +30,7 @@
 		App.set("loginer", userInfo);
 		//触发相关事件
 		eventManager.fire("getLoginer");
+		eventManager.emitAfter("getLoginer");
 	};
 
 	function _login_err(errorCode) {
